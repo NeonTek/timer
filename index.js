@@ -1,4 +1,4 @@
-/Matthew 6:33 But seek ye first the kingdom of God and His rightousness and all this things shall be added unto you./
+//Matthew 6:33 But seek ye first the kingdom of God and His rightousness and all this things shall be added unto you.
 const timerTime = $('#timer-time');
 const setBtn = $('#set');
 const repeatBtn = $('#repeat');
@@ -12,6 +12,18 @@ const body = $('body');
 countdown.html('0min : 0sec')
 
 const timer = () => {
+    let wakeLock = null;
+
+    const requestWakeLock = async () => {
+        try {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake Lock activated.');
+        } catch (err) {
+            console.error(`${err.name}, ${err.message}`);
+        }
+    };
+
+    requestWakeLock();
     body.toggleClass('background')
     setBtn.attr('disabled', true);
     timerTime.attr('disabled', true);
@@ -58,6 +70,18 @@ stopBtn.on('click', () => {
     setBtn.attr('disabled', false);
     timerTime.attr('disabled', false);
     muteBtn.text('Silence');
+    const releaseWakeLock = async () => {
+        if (wakeLock !== null) {
+            try {
+                await wakeLock.release();
+                console.log('Wake Lock released.');
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+            }
+        }
+    };
+    
+    releaseWakeLock();    
 })
 setBtn.on('click', timer);
 
