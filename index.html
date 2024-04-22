@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="<KEY>" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="<KEY>" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="styles.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body class="container-fluid">
+        <audio src="fx-lumu-cellphone-ringtone-huawei-y6-fx-old-phone-68532 (1).mp3" id="alarm-sound"></audio>
+        <h1 class="text-center text-primary">Neon Timer</h1>
+        <div class="container d-flex justify-content-center align-items-center">
+            <input id="timer-time" class="btn-outline-light col-md-6" type="text" placeholder="Number of minutes"/>
+            <button id="set" class="btn btn-outline-light"> Set </button>
+        </div>
+        <div id="settings" class="menu container flex-column justify-content-center align-items-center hidden">
+            <p class="text-center text-light">Time to take a short break &#128522</p> 
+                <button id="repeat" class="btn btn-primary">Next Session</button></br>
+                <button id="mute" class="btn btn-primary">Silence</button></br>
+                <button id="stop" class="btn btn-primary">End</button>
+        </div>
+        <div id="countdown" class="timer d-flex justify-content-center"></div>
+        <script src="index.js"></script>
+    </body>
+</html>
