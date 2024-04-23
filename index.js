@@ -151,3 +151,8 @@ setBtn.on('click', () => {
 
 timerTime.attr('disabled', false)
 setBtn.attr('disabled', false);
+timerTime.keypress(function(event){
+    if(event.key === 'Enter'){
+        timer(timerTime.val());
+    }
+});
