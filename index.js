@@ -14,7 +14,6 @@ const resetBtn = $('#reset-btn');
 
 countdown.html('0min : 0sec')
 
-
 let times = [];
 let buttonClicked = false;
 let count = 0;
@@ -73,19 +72,44 @@ const timer = (time) => {
         times[0] = newTimeLeft;
         return;
     }
+    if (timeLeft === 0) {
+        clearInterval(timerInterval);
+        endMenu.toggleClass('hidden');
+        endMenu.toggleClass('d-flex');
+        alarm.play();
+        alarm.currentTime = 0;
+        muteBtn.text('Silence');
+        const releaseWakeLock = async () => {
+            if (wakeLock !== null) {
+                try {
+                    await wakeLock.release();
+                    console.log('Wake Lock released.');
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
+        };
+        
+        releaseWakeLock();
+    }
 }, 1000);
 };
 
-
+$(document).on('click', function(event) {
+    if (!$(event.target).closest(endMenu).length) {
+        endMenu.addClass('hidden');
+    }
+});
 muteBtn.on ('click', () => {
     alarm.pause();
     alarm.currentTime = 0;
     muteBtn.text('Silenced');
-    alarm.toggleClass('silenced');
+    muteBtn.toggleClass('silenced');
 });
 
 repeatBtn.on ('click', () => {
-    timer();
+    let OgTime = timerTime.val();
+    timer(OgTime);
     alarm.pause();
     endMenu.toggleClass('hidden');
     endMenu.toggleClass('d-flex');
@@ -106,6 +130,7 @@ stopBtn.on('click', () => {
     alarm.pause();
     setBtn.attr('disabled', false);
     timerTime.attr('disabled', false);
+    timerTime.val('');
     muteBtn.text('Silence');
     const releaseWakeLock = async () => {
         if (wakeLock !== null) {
