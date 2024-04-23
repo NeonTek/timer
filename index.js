@@ -8,10 +8,32 @@ const alarm = $('#alarm-sound')[0];
 const countdown = $('#countdown');
 const endMenu = $('#settings');
 const body = $('body');
+const stopTimerBtn = $('#stop-btn');
+const stopTimerDiv = $('.stop-timer');
+const resetBtn = $('#reset-btn');
 
 countdown.html('0min : 0sec')
 
-const timer = () => {
+
+let times = [];
+let buttonClicked = false;
+let count = 0;
+stopTimerBtn.on('click', function() {
+    count++;
+    resetBtn.removeClass('hidden');
+    buttonClicked = true;
+    if (buttonClicked && count % 2 === 0) {
+        stopTimerBtn.attr('disabled', true);
+        setTimeout(function(){
+            stopTimerBtn.attr('disabled', false);
+        }, 1000)
+        resetBtn.addClass('hidden');
+        timer(Number(times[0]));
+    }
+});
+
+
+const timer = (time) => {
     let wakeLock = null;
 
     const requestWakeLock = async () => {
@@ -24,30 +46,36 @@ const timer = () => {
     };
 
     requestWakeLock();
-    body.toggleClass('background')
+    stopTimerDiv.removeClass('hidden');
+    stopTimerBtn.text('Stop Timer');
+    setBtn.addClass('hidden');
+    body.toggleClass('background');
     setBtn.attr('disabled', true);
     timerTime.attr('disabled', true);
-    timeLeft = Math.trunc(timerTime.val() * 60);
+    timeLeft = Math.trunc(time * 60);
     var min = Math.floor(timeLeft/60)
     var sec = timeLeft % 60;
-    countdown.html(`${min} min : ${sec}sec`);
+    countdown.html(`${min}min : ${sec}sec`);
         var timerInterval = setInterval( function UpdateCountdown(){
             var newDuration = timeLeft - 1;
             min = Math.floor(newDuration/60)
             sec = newDuration % 60;
             timeLeft = newDuration;       
-            countdown.html(`${min} min : ${sec}sec`);
-
-    if (timeLeft === 0) {
-        clearInterval(timerInterval);
-        alarm.play();
-        endMenu.toggleClass('hidden');
-        endMenu.toggleClass('d-flex');
-        body.toggleClass('background');
+            countdown.html(`${min}min : ${sec}sec`);
+            let newTimeLeft = timeLeft / 60;
+    if (buttonClicked && count % 2 === 1) {
+        let stopMin = min;
+        let stopSec = sec;
+        countdown.html(`${stopMin}min : ${stopSec}sec`);
+        clearInterval(timerInterval); 
+        paused = true;
+        stopTimerBtn.text('Continue');
+        times[0] = newTimeLeft;
+        return;
     }
-    ;
-}, 1000)
-}
+}, 1000);
+};
+
 
 muteBtn.on ('click', () => {
     alarm.pause();
@@ -62,6 +90,15 @@ repeatBtn.on ('click', () => {
     endMenu.toggleClass('hidden');
     endMenu.toggleClass('d-flex');
     muteBtn.text('Silence');
+});
+resetBtn.on('click', () => {
+    setBtn.attr('disabled', false);
+    timerTime.attr('disabled', false);
+    timerTime.val('');
+    times.splice(0, times.length);
+    stopTimerDiv.addClass('hidden');
+    setBtn.removeClass('hidden');
+    countdown.html(' 0min : 0sec');
 });
 stopBtn.on('click', () => {
     endMenu.toggleClass('hidden');
@@ -82,10 +119,10 @@ stopBtn.on('click', () => {
     };
     
     releaseWakeLock();    
-})
-setBtn.on('click', timer);
+});
+setBtn.on('click', () => {
+    timer(timerTime.val());
+});
 
 timerTime.attr('disabled', false)
 setBtn.attr('disabled', false);
-
-
